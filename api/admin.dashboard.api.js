@@ -5,7 +5,6 @@ const admin = require('express').Router();
 admin.get('/allStudents',async(req,res)=>{
    
             let numOfStudent = await userModel.count({role:"student"});
-            console.log(numOfStudent);
             let allStudents = await userModel.find({role:"student"});
             if(allStudents)
             {
