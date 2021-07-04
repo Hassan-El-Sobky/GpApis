@@ -37,9 +37,12 @@ assesment.post('/createAssesment',async(req,res)=>{
     }
     })  
 })
-assesment.get("/solveAssesment/:assesmentId", async(req,res)=>{
+assesment.get("/solveAssesment/:assesmentId/:username", async(req,res)=>{
     let _id = req.params.assesmentId;
-    const d = new Date()
+    let username = req.params.username;
+    let student = await userModel.findOne({username});
+    let studentCourse = await studentCourseModel.findOne({userID:student._id})
+    const d = new Date();
     let momentDate = moment(d).format("YYYY-MM-DDTHH:MM")
     console.log(`momentDate:${momentDate}`);
     const assesment = await assesmentModel.findOne({_id })
@@ -48,7 +51,20 @@ assesment.get("/solveAssesment/:assesmentId", async(req,res)=>{
     let test = moment(momentDate).isBetween(assesment.openDate,assesment.dueDate)
     console.log(test);
     if(test){
-        res.json({assesment , open:true});         
+        let temp = false ;
+        for (let i = 0; i < studentCourse.grades.length; i++) {
+            if ( studentCourse.grades[i].assesmentId == _id)
+            {
+                temp = true 
+                break;
+            }
+        }
+        if(temp){
+            res.json({message:"you can't Enter exam again"})
+        }
+        else{
+            res.json({assesment , open:true});         
+        }
     }
     else {
         res.json({message:"exam closed" , open:false})
