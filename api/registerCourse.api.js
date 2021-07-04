@@ -15,8 +15,13 @@ registerCourse.post('/registerCourse',(req,res)=>{
             const courseid = await courseModel.findOne({courseCode:courseCode});
             console.log(userid);
             if(userid && courseid){
+                const studentCourse = await studentCourseModel.findOne({userID:userid._id , courseId:courseid._id})
+                if(studentCourse){
+                    res.json({message:"you are already enrolled"})
+                }
+                else{
                 await studentCourseModel.insertMany({userID:userid._id, courseId:courseid._id})
-                res.json({message:"done"})
+                res.json({message:"done"})}
        }
             
             else{
