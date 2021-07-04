@@ -4,6 +4,7 @@ const {check , validationResult} = require('express-validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
+const moment = require('moment');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './uploads/userImages/')
@@ -53,7 +54,9 @@ check('rePassword').custom((value, { req }) => {
                     else {
                       //  let pathh= req.file.path.replace('uploads/','');
                         //let imageUrl="http://lmsapis.herokuapp.com/"+pathh;
-                        await userModel.insertMany({name , username , email:email.toLowerCase() , password : hash , gender , role , imageUrl:`http://localhost:3000/${req.file.path}`,mobilePhone });
+                        let d = new Date()
+                        let registrationDate = moment(d).format("YYYY-MM-DDTHH:MM")
+                        await userModel.insertMany({name , username , email:email.toLowerCase() , password : hash , gender , role , imageUrl:`http://localhost:3000/${req.file.path}`,mobilePhone,registrationDate });
                         user = await userModel.findOne({username})
                         res.json({message:'user'+username+'Created' , user});
                     }
@@ -102,9 +105,11 @@ check('rePassword').custom((value, { req }) => {
                                 res.json({message:"unsupported file type"})
                             }
                             else{
-                                let pathh= req.file.path.replace('uploads/','');
-                                let imageUrl="http://lmsapis.herokuapp.com/"+pathh;
-                                await userModel.insertMany({name , username , email:email.toLowerCase() , password : hash , gender , role:"instructor" ,imageUrl,mobilePhone});
+                                //let pathh= req.file.path.replace('uploads/','');
+                                //let imageUrl="http://lmsapis.herokuapp.com/"+pathh;
+                                let d = new Date()
+                                let registrationDate = moment(d).format("YYYY-MM-DDTHH:MM")
+                                await userModel.insertMany({name , username , email:email.toLowerCase() , password : hash , gender , role:"instructor" ,imageUrl:`http://localhost:3000/${req.file.path}`,mobilePhone,registrationDate});
                                 user = await userModel.findOne({username})
                                 res.json({message:'Instructor'+username+'Created' , user});
                             }
@@ -140,7 +145,7 @@ signup.get('/searchuser' , async (req,res)=>{
 signup.get('/searchInstructor' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.findOne({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"instructor"}]})
     if(searchResult){
     res.json({searchResult});
@@ -152,7 +157,7 @@ signup.get('/searchInstructor' , async (req,res)=>{
 signup.get('/searchStudent' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.findOne({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"student"}]})
     if(searchResult){
     res.json({searchResult});
@@ -164,7 +169,7 @@ signup.get('/searchStudent' , async (req,res)=>{
 signup.get('/searchAdmin' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.findOne({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"admin"}]})
     if(searchResult){
     res.json({searchResult});
