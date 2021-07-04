@@ -112,5 +112,45 @@ registerCourse.post('/grade/:username',async(req,res)=>{
             
         
 })
-
+registerCourse.get('/grades/:username',async(req,res)=>{
+    let username = req.params.username;
+    let student = await userModel.findOne({username});
+    if(student){
+        let grades = await studentCourseModel.find({userID:student._id});
+        if(grades){
+            let gradesContainer =[]
+            for (let i = 0; i < grades.length; i++) {
+                for (let j = 0; j < grades[i].grades.length; j++) {
+                    let assesmentTemp = await assesmentModel.findOne({_id:grades[i].grades[j].assesmentId});
+                    let courseTemp = await courseModel.findOne({_id:assesmentTemp.courseId});
+                    gradesContainer.push({assessmentTitle : assesmentTemp.title , courseName : courseTemp.courseName , grade:grades[i].grades[j].grade});
+                }
+            }
+            res.json({gradesContainer})
+        }
+        else{
+            res.json({message:"no grades"})
+        }
+    }
+    else{
+        res.json({message:"invalid username"})
+    }
+})
+registerCourse.get('/courseGrades/:courseId/:username',async(req,res)=>{
+    let courseId = req.params.courseId;
+    let username = req.params.username;
+    let student = await userModel.findOne({username});
+    let course = await courseModel.findOne({_id:courseId});
+    let assesment = await assesmentModel.find({courseId});
+    let studentCourse = await studentCourseModel.findOne({userID:student._id,courseId});
+    let container = []
+    for (let i = 0; i < studentCourse.grades.length; i++) {
+        let assesmentTemp = await assesmentModel.findOne({_id:studentCourse.grades[i].assesmentId , courseId});
+        if(assesmentTemp){
+            container.push({courseName:course.courseName , assesmentTitle: assesmentTemp.title , grade : studentCourse.grades[i].grade})
+        }
+        
+    }
+    res.json({container})
+})
 module.exports=registerCourse;
