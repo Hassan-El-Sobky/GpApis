@@ -4,6 +4,7 @@ const studentCourseModel = require('../models/studentCourse.model');
 const userModel = require("../models/user.model");
 const assesmentModel = require('../models/assesment.model')
 const jwt=require("jsonwebtoken");
+const moment = require('moment');
 registerCourse.post('/registerCourse',(req,res)=>{
     const {username ,token, courseCode}=req.body;
     jwt.verify(token , "student" ,async (err, decodded)=>{
@@ -20,7 +21,9 @@ registerCourse.post('/registerCourse',(req,res)=>{
                     res.json({message:"you are already enrolled"})
                 }
                 else{
-                await studentCourseModel.insertMany({userID:userid._id, courseId:courseid._id})
+                    let d = new Date();
+                    let registrationDate = moment(d).format("YYYY-MM-DDTHH:MM")
+                await studentCourseModel.insertMany({userID:userid._id, courseId:courseid._id , registrationDate})
                 res.json({message:"done"})}
        }
             
