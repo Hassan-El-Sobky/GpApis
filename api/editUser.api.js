@@ -44,7 +44,8 @@ check('rePassword').custom((value, { req }) => {
                if(match){
                    if(errors.isEmpty()==true){
                        let user1 = await userModel.findOne({username})
-                       if(user1){
+                       console.log(user1&&user1!==user);
+                       if(user1&&user1==user){
                            res.json("user exist")
                        }else{ 
                             if (password) {
