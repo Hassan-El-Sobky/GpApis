@@ -83,7 +83,7 @@ uploadAssigmentsSolution.get("/allStudentAssigments/:id/:courseid",async(req,res
     let courseAssigments= await assigmentModel.find({courseId})
     let solutions=[];
     for (let i = 0; i < courseAssigments.length; i++) {
-         solutions.push({username:user.username , solutions : await assigmentSolutionModel.find({userId ,assigmentId: courseAssigments[i]._id})})
+         solutions.push({assigmentTitle : courseAssigments[i].title , username:user.username , solution: await assigmentSolutionModel.find({userId ,assigmentId: courseAssigments[i]._id}) })
     }
     res.json({solutions})
 })
