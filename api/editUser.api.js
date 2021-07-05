@@ -24,89 +24,79 @@ var storage = multer.diskStorage({
   }
   const userImage = multer({dest:'./uploads/userImages/',storage , fileFilter });
 
-server.put('/userEdit',userImage.single("userImage"),/*check('password').matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/),*/
-check('rePassword').custom((value, { req }) => {
+server.put('/editUser' ,userImage.single("userImage") , check('rePassword').custom((value, { req }) => {
     if (value !== req.body.password) {
         return false
     }
     return true;
-})
-,async(req,res)=>{
-    const {oldUserName,username, oldPassword,password,rePassword}=req.body;
-    console.log(password);
+}) , async (req,res)=>{
+    const { name ,username ,oldPassword,password , rePassword } = req.body
     const errors = validationResult(req);
-    
-    const user = await userModel.findOne({username:oldUserName});
-    const match = await bcrypt.compare(oldPassword, user.password);
-    console.log(req.file);
-    try {
-
-               if(match){
-                   if(errors.isEmpty()==true){
-                       let user1 = await userModel.findOne({username})
-                       console.log(user1&&user1!==user);
-                       if(user1&&user1==user){
-                           res.json("user exist")
-                       }else{ 
-                            if (password) {
-                                check('password').matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
-                                bcrypt.hash(password, 4, async (err, hash)=> {
-                                    if (username&&req.file!==undefined) {
-                                    await userModel.updateMany({username:oldUserName},{$set:{password:hash, username:username , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                                    res.json('updated');   
-                                    }
-                                    else if (username){
-                                        await userModel.updateMany({username:oldUserName},{$set:{password:hash, username:username , imageUrl:user.imageUrl}});
-                                        res.json('updated');
-
-                                    }
-                                    else if (req.file!==undefined)
-                                    {
-                                        await userModel.updateMany({username:oldUserName},{$set:{password:hash, username:oldUserName , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                                        res.json('updated');
-                                    }
-                                    else{
-                                        await userModel.updateMany({username:oldUserName},{$set:{password:hash, username:oldUserName ,imageUrl:user.imageUrl}});
-                                        res.json('updated'); 
-                                    }
-
-                                });   
+    if (errors.isEmpty()) {
+        const user = await userModel.findOne({username});
+        console.log(user);
+        if(user){
+            const match = await bcrypt.compare(oldPassword, user.password);
+            if(match){
+                if(password){
+                    check('password').matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
+                    bcrypt.hash(password, 4, async (err, hash)=> {
+                        if (name&&req.file!==undefined) {
+                            await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                            res.json('updated');   
                             }
-                            else {
-                                bcrypt.hash(oldPassword, 4, async (err, hash)=> {
-                                    if (username&&req.file!==undefined) {
-                                        await userModel.updateMany({username:oldUserName},{$set:{oldPassword:hash, username:username , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                                        res.json('updated');
-                                    }
-                                    else if (username){
-                                        await userModel.updateMany({username:oldUserName},{$set:{oldPassword:hash, username:username , imageUrl:user.imageUrl}});
-                                        res.json('updated');
-                                    }
-                                    else if (req.file!==undefined){
-                                        await userModel.updateMany({username:oldUserName},{$set:{oldPassword:hash, username:oldUserName , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                                        res.json('updated');
-                                    }
-                                    else{
-                                        await userModel.updateMany({username:oldUserName},{$set:{oldPassword:hash, username:oldUserName , imageUrl:user.imageUrl}});
-                                        res.json('updated');
-                                    }
-                                });                              
-                                }
+                            else if (name){
+                                await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:user.imageUrl}});
+                                res.json('updated');
 
-                       }
+                            }
+                            else if (req.file!==undefined)
+                            {
+                                await userModel.updateMany({username},{$set:{password:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                                res.json('updated');
+                            }
+                            else{
+                                await userModel.updateMany({username},{$set:{password:hash, name:user.name ,imageUrl:user.imageUrl}});
+                                res.json('updated'); 
+                            }
 
-                   }
-                   else{
-                    console.log(errors.array());
-                   }
-               }else{
-                   res.json('Wrong Password!');
-               }
-            
-        
-    } catch (error) {
-        
+
+                    });  
+                }
+                else{
+                    bcrypt.hash(oldPassword, 4, async (err, hash)=> {
+                        if (name&&req.file!==undefined) {
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                            res.json('updated');
+                        }
+                        else if (name){
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, username:username , imageUrl:user.imageUrl}});
+                            res.json('updated');
+                        }
+                        else if (req.file!==undefined){
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                            res.json('updated');
+                        }
+                        else{
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:user.imageUrl}});
+                            res.json('updated');
+                        }
+                    }); 
+                    
+                }
+            }
+            else{
+                res.json({message:"Wrong Old password"})
+            }
+        }
+        else{
+            res.json({message:"invalid username"})
+        }
     }
-})
+    else 
+    {
+        res.json({message : errors.array()})
+    }
 
+} )
 module.exports= server;
