@@ -41,12 +41,12 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                 if(password && password!="null"){
                     check('password').matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
                     bcrypt.hash(password, 4, async (err, hash)=> {
-                        if (name&&req.file!==undefined) {
+                        if (name&&req.file!==undefined&&name!="null") {
                             await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:`http://localhost:3000/${req.file.path}`}});
                             let user1 = await userModel.findOne({username})
                             res.json({message:'updated' , user1});   
                             }
-                            else if (name){
+                            else if (name&&name!="null"){
                                 await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:user.imageUrl}});
                                 let user1 = await userModel.findOne({username})
                                 res.json({message:'updated' , user1}); 
@@ -66,20 +66,20 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                 }
                 else{
                     bcrypt.hash(oldPassword, 4, async (err, hash)=> {
-                        if (name&&req.file!==undefined) {
-                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                        if (name&&req.file!==undefined&&name!="null") {
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name , imageUrl:`http://localhost:3000/${req.file.path}`}});
                             let user1 = await userModel.findOne({username})
                             res.json({message:'updated' , user1});                            }
-                        else if (name){
-                            await userModel.updateMany({username},{$set:{oldPassword:hash, username:username , imageUrl:user.imageUrl}});
+                        else if (name&&name!="null"){
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name , imageUrl:user.imageUrl}});
                             let user1 = await userModel.findOne({username})
                             res.json({message:'updated' , user1});                        }
                         else if (req.file!==undefined){
-                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name , imageUrl:`http://localhost:3000/${req.file.path}`}});
                             let user1 = await userModel.findOne({username})
                             res.json({message:'updated' , user1});                            }
                         else{
-                            await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:user.imageUrl}});
+                            await userModel.updateMany({username},{$set:{oldPassword:hash, name , imageUrl:user.imageUrl}});
                             let user1 = await userModel.findOne({username})
                             res.json({message:'updated' , user1});                       }
                     }); 
