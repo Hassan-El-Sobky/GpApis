@@ -38,7 +38,7 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
         if(user){
             const match = await bcrypt.compare(oldPassword, user.password);
             if(match){
-                if(password){
+                if(password && password!="null"){
                     check('password').matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
                     bcrypt.hash(password, 4, async (err, hash)=> {
                         if (name&&req.file!==undefined) {
