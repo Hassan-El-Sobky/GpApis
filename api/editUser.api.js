@@ -35,7 +35,8 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
     if (errors.isEmpty()) {
         const user = await userModel.findOne({username});
         console.log(user);
-        if(user){
+        if (user) {
+            console.log(req.file)
             const match = await bcrypt.compare(oldPassword, user.password);
             if(match){
                 if(password && password!="null"){
