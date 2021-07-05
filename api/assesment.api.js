@@ -99,22 +99,22 @@ assesment.get('/courseExams/:courseId/:username',async(req,res)=>{
     for (let i = 0; i < courseExams.length; i++) {
         let mmm=false;
         for (let j = 0; j < studentCourse.grades.length; j++) {
-           // console.log(studentCourse.grades[j].assesmentId +" === "+courseExams[i]._id);
+            console.log(studentCourse.grades[j].assesmentId +" === "+courseExams[i]._id);
             if ( JSON.stringify(studentCourse.grades[j].assesmentId) === JSON.stringify(courseExams[i]._id))
             {
                 mmm = true ;
-              //  console.log("MMM : "+ mmm);
-                break
+               console.log("MMM : "+ mmm);
+                
             }
 
-            //console.log("MMM : "+ mmm);
+            console.log("MMM : "+ mmm);
 
         }
-       // console.log("moment test : "+ moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate));
+       console.log("moment test : "+ moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate));
         let test = (moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)&&mmm)
-        //console.log("test :"+test);
+        console.log("test :"+test);
         var temp = {assesment:courseExams[i],open:test};
-        //console.log(temp);
+       // console.log(temp);
         exams.push(temp);
     }
     if(exams[0]){
@@ -169,17 +169,6 @@ assesment.get('/allAssesments',async(req,res)=>{
         res.json({message:"there is no assesments "})
     }
     
-})
-assesment.get('/courseExams/:courseId',async(req,res)=>{
-    let courseId = req.params.courseId;
-    let courseExams = await assesmentModel.find({courseId ,category:"exam"});
-    if(courseExams[0]){
-        res.json({courseExams});
-    }
-    else{
-        res.json({message : "there is no  Exams for this course"})
-    }
-
 })
 assesment.get('/courseQuizes/:courseId',async(req,res)=>{
     let courseId = req.params.courseId;
