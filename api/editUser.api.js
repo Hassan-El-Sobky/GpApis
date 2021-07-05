@@ -32,7 +32,7 @@ check('rePassword').custom((value, { req }) => {
     return true;
 })
 ,async(req,res)=>{
-    const {oldUserName,username, oldPassword,password,rePassword,}=req.body;
+    const {oldUserName,username, oldPassword,password,rePassword}=req.body;
     console.log(password);
     const errors = validationResult(req);
     
