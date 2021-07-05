@@ -43,22 +43,23 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                     bcrypt.hash(password, 4, async (err, hash)=> {
                         if (name&&req.file!==undefined) {
                             await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                            res.json('updated');   
+                            let user = await userModel.findOne({username})
+                            res.json({message:'updated' , user});   
                             }
                             else if (name){
                                 await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:user.imageUrl}});
-                                res.json('updated');
-
+                                let user = await userModel.findOne({username})
+                                res.json({message:'updated' , user});   
                             }
                             else if (req.file!==undefined)
                             {
                                 await userModel.updateMany({username},{$set:{password:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                                res.json('updated');
-                            }
+                                let user = await userModel.findOne({username})
+                                res.json({message:'updated' , user});                               }
                             else{
                                 await userModel.updateMany({username},{$set:{password:hash, name:user.name ,imageUrl:user.imageUrl}});
-                                res.json('updated'); 
-                            }
+                                let user = await userModel.findOne({username})
+                                res.json({message:'updated' , user});                               }
 
 
                     });  
@@ -67,20 +68,20 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                     bcrypt.hash(oldPassword, 4, async (err, hash)=> {
                         if (name&&req.file!==undefined) {
                             await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                            res.json('updated');
-                        }
+                            let user = await userModel.findOne({username})
+                            res.json({message:'updated' , user});                           }
                         else if (name){
                             await userModel.updateMany({username},{$set:{oldPassword:hash, username:username , imageUrl:user.imageUrl}});
-                            res.json('updated');
-                        }
+                            let user = await userModel.findOne({username})
+                            res.json({message:'updated' , user});                           }
                         else if (req.file!==undefined){
                             await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:`http://localhost:3000/${req.file.path}`}});
-                            res.json('updated');
-                        }
+                            let user = await userModel.findOne({username})
+                            res.json({message:'updated' , user});                           }
                         else{
                             await userModel.updateMany({username},{$set:{oldPassword:hash, name:user.name , imageUrl:user.imageUrl}});
-                            res.json('updated');
-                        }
+                            let user = await userModel.findOne({username})
+                            res.json({message:'updated' , user});                           }
                     }); 
                     
                 }
