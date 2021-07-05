@@ -97,12 +97,12 @@ assesment.get('/courseExams/:courseId/:username',async(req,res)=>{
     //console.log(studentCourse.grades[2].assesmentId+ "==="+ courseExams[1]._id);
     //console.log("temppp  :" +(JSON.stringify(studentCourse.grades[2].assesmentId) ==JSON.stringify(courseExams[1]._id)));
     for (let i = 0; i < courseExams.length; i++) {
-        let mmm=false;
+        let mmm=true;
         for (let j = 0; j < studentCourse.grades.length; j++) {
             console.log(studentCourse.grades[j].assesmentId +" === "+courseExams[i]._id);
             if ( JSON.stringify(studentCourse.grades[j].assesmentId) === JSON.stringify(courseExams[i]._id))
             {
-                mmm = true ;
+                mmm = false ;
                console.log("MMM : "+ mmm);
                 
             }
