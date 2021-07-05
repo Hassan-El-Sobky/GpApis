@@ -159,4 +159,34 @@ registerCourse.get('/courseGrades/:courseId/:username',async(req,res)=>{
     }
     res.json({container})
 })
+registerCourse.get('/gradesCourse/:courseId',async(req,res)=>{
+    let courseId = req.params.courseId;
+    let course = await courseModel.findOne({_id:courseId});
+    let assesment = await assesmentModel.find({courseId});
+    let studentCourse = await studentCourseModel.find({courseId});
+    let container = []
+    console.log("stCourse : "+studentCourse.length);
+    console.log(studentCourse[0].grades.length);
+    for (let i = 0; i < studentCourse.length; i++) {
+        for (let j = 0; j < studentCourse[i].grades.length; j++) {
+            let assesmentTemp = await assesmentModel.findOne({_id:studentCourse[i].grades[j].assesmentId , courseId});
+            let user = await userModel.findOne({_id:studentCourse[i].userID})
+            console.log("temp :"+assesmentTemp);
+            if(assesmentTemp){
+                container.push({studentUserName: user.username, assesmentTitle: assesmentTemp.title , grade : studentCourse[i].grades[j].grade})
+            }
+        }
+    }
+  /*  for (let i = 0; i < studentCourse.grades.length; i++) {
+        let assesmentTemp = await assesmentModel.findOne({_id:studentCourse.grades[i].assesmentId , courseId});
+        console.log(assesmentTemp);
+        if(assesmentTemp){
+            container.push({courseName:course.courseName , assesmentTitle: assesmentTemp.title , grade : studentCourse.grades[i].grade})
+        }
+        
+    }*/
+    res.json({container})
+})
+
+
 module.exports=registerCourse;
