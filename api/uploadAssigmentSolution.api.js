@@ -60,6 +60,7 @@ uploadAssigmentsSolution.post('/uploadassigmentsSolution',assigmentsSolution.sin
                            res.json({message:"you can't upload second solution  , thankYou"});
                         }
                         else{
+                            console.log(assigment);
                             let d = new Date();
                             let momentDate = moment(d).format("YYYY-MM-DDTHH:MM");
                             console.log("momentDate : "+momentDate);
