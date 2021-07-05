@@ -62,6 +62,8 @@ uploadAssigmentsSolution.post('/uploadassigmentsSolution',assigmentsSolution.sin
                         else{
                             let d = new Date();
                             let momentDate = moment(d).format("YYYY-MM-DDTHH:MM");
+                            console.log("momentDate : "+momentDate);
+                            console.log("deadline : "+assigment.deadLine);
                             let test = moment(momentDate).isBetween(assigment.uploadDate,assigment.deadLine);
                             if(test){
                             await assigmentSolutionModel.insertMany({userId:user._id , additionPoint , assigmentId:assigment._id , fileUrl:`http://localhost:3000/${req.file.path}` });
