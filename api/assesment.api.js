@@ -60,7 +60,7 @@ assesment.get("/solveAssesment/:assesmentId/:username", async(req,res)=>{
             }
         }
         if(temp){
-            res.json({message:"you can't Enter exam again"})
+            res.json({message:"you can't Enter exam again" , open:false})
         }
         else{
             res.json({assesment , open:true});         
@@ -98,19 +98,55 @@ assesment.delete("/deleteAssesment/:assesmentId",async(req,res)=>{
         }
     })
 })
-assesment.get('/courseExams/:courseId',async(req,res)=>{
+assesment.get('/courseExams/:courseId/:username',async(req,res)=>{
     let courseId = req.params.courseId;
+    let username = req.params.username;
     let courseExams = await assesmentModel.find({courseId ,category:"exam"});
+    let student = await userModel.findOne({username})
+    let studentCourse = await studentCourseModel.findOne({userID:student._id , courseId})
     const d = new Date()
     let momentDate = moment(d).format("YYYY-MM-DDTHH:MM")
     console.log(`momentDate:${momentDate}`);
     const assesment = await assesmentModel.find({});
     let exams = []
     for (let i = 0; i < courseExams.length; i++) {
-        let test = moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)
-        //console.log(test);
+        let mmm = false;
+        for (let j = 0; j < studentCourse.grades.length; j++) {
+            if ( studentCourse.grades[i].assesmentId == courseExams[i]._id)
+            {
+                mmm = true ;
+                break;
+            }
+        }
+        console.log("MMM : "+ mmm);
+        console.log("moment test : "+ moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate));
+        let test = (moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)||mmm)
+        console.log("test :"+test);
         var temp = {assesment:courseExams[i],open:test};
-        console.log(temp);
+        //console.log(temp);
+        exams.push(temp);
+    }
+    if(exams[0]){
+        res.json({exams});
+        
+    }
+    else{
+        res.json({message : "there is no  Exams for this course"})
+    }
+
+})
+assesment.get('/Exams/:courseId',async(req,res)=>{
+    let courseId = req.params.courseId;
+    let courseExams = await assesmentModel.find({courseId ,category:"exam"});
+    const d = new Date()
+    let momentDate = moment(d).format("YYYY-MM-DDTHH:MM")
+    console.log(`momentDate:${momentDate}`);
+    let exams = []
+    for (let i = 0; i < courseExams.length; i++) {
+        let test = moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)
+        console.log(test);
+        var temp = {assesment:courseExams[i],open:test};
+        //console.log(temp);
         exams.push(temp);
     }
     if(exams[0]){
