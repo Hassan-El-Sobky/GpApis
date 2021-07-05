@@ -90,22 +90,29 @@ assesment.get('/courseExams/:courseId/:username',async(req,res)=>{
     let studentCourse = await studentCourseModel.findOne({userID:student._id , courseId})
     const d = new Date()
     let momentDate = moment(d).format("YYYY-MM-DDTHH:MM")
-    console.log(`momentDate:${momentDate}`);
+    //console.log(`momentDate:${momentDate}`);
     const assesment = await assesmentModel.find({});
     let exams = []
+    //console.log(studentCourse.grades[0]);
+    //console.log(studentCourse.grades[2].assesmentId+ "==="+ courseExams[1]._id);
+    //console.log("temppp  :" +(JSON.stringify(studentCourse.grades[2].assesmentId) ==JSON.stringify(courseExams[1]._id)));
     for (let i = 0; i < courseExams.length; i++) {
-        let mmm = false;
+        let mmm=false;
         for (let j = 0; j < studentCourse.grades.length; j++) {
-            if ( studentCourse.grades[i].assesmentId == courseExams[i]._id)
+           // console.log(studentCourse.grades[j].assesmentId +" === "+courseExams[i]._id);
+            if ( JSON.stringify(studentCourse.grades[j].assesmentId) === JSON.stringify(courseExams[i]._id))
             {
                 mmm = true ;
-                break;
+              //  console.log("MMM : "+ mmm);
+                break
             }
+
+            //console.log("MMM : "+ mmm);
+
         }
-        console.log("MMM : "+ mmm);
-        console.log("moment test : "+ moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate));
-        let test = (moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)||mmm)
-        console.log("test :"+test);
+       // console.log("moment test : "+ moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate));
+        let test = (moment(momentDate).isBetween(courseExams[i].openDate,courseExams[i].dueDate)&&mmm)
+        //console.log("test :"+test);
         var temp = {assesment:courseExams[i],open:test};
         //console.log(temp);
         exams.push(temp);
