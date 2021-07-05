@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const assigmentSchema = mongoose.Schema({
     title:{type:String},
+    uploadDate:{type:String},
     deadLine:{type:String},
     description:{type:String},
     assigmentCode:{type:String},

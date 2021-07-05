@@ -5,6 +5,7 @@ const multer=require('multer');
 const express = require('express');
 const uploadAssigments=express();
 const jwt=require("jsonwebtoken");
+const moment = require('moment');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/assigments/')
@@ -31,6 +32,8 @@ const assigments = multer({dest:'uploads/assigments/',storage,fileFilter});
 
 uploadAssigments.post('/uploadassigments',assigments.single('assigmentFile'),async (req,res)=>{
     const {title,deadLine,description,assigmentCode,courseCode,token , username} =req.body
+    const d = new Date()
+    let uploadDate = moment(d).format("YYYY-MM-DDTHH:MM");
     jwt.verify(token , "instructor" ,async (err, decodded)=>{
         if(err){
             res.json({message:"there is error in token"});
@@ -50,7 +53,7 @@ uploadAssigments.post('/uploadassigments',assigments.single('assigmentFile'),asy
                     const assigment = await assigmentModel.findOne({assigmentCode , courseCode});
                     //console.log(assigmentsss);
                     if(!assigment){
-                        await assigmentModel.insertMany({title , deadLine , description , assigmentCode,courseId:course._id , fileUrl:`http://localhost:3000/${req.file.path}` });
+                        await assigmentModel.insertMany({title , deadLine , description , assigmentCode,courseId:course._id , fileUrl:`http://localhost:3000/${req.file.path}`,uploadDate  });
                         
                         res.json({message:'done', message2:req.file})
                     }

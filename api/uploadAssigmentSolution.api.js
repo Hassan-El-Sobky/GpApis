@@ -6,6 +6,7 @@ const multer=require('multer');
 const express = require('express');
 const uploadAssigmentsSolution=express();
 const jwt=require("jsonwebtoken");
+const moment = require('moment');
 const courseModel = require('../models/course.model');  
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -48,8 +49,10 @@ uploadAssigmentsSolution.post('/uploadassigmentsSolution',assigmentsSolution.sin
             const course = await courseModel.findOne({courseCode});
             if(course){
                 const studentCourse = await studentCourseModel.findOne({userID:user._id,courseId:course._id});
+
                 if(studentCourse){
                     const assigment = await assigmentModel.findOne({assigmentCode , courseId: studentCourse.courseId});
+
                     if (assigment) {
                         const solution = await assigmentSolutionModel.findOne({userId:user._id , assigmentId:assigment._id});
                         console.log(solution);
@@ -57,8 +60,15 @@ uploadAssigmentsSolution.post('/uploadassigmentsSolution',assigmentsSolution.sin
                            res.json({message:"you can't upload second solution  , thankYou"});
                         }
                         else{
+                            let d = new Date();
+                            let momentDate = moment(d).format("YYYY-MM-DDTHH:MM");
+                            let test = moment(momentDate).isBetween(assigment.uploadDate,assigment.deadLine);
+                            if(test){
                             await assigmentSolutionModel.insertMany({userId:user._id , additionPoint , assigmentId:assigment._id , fileUrl:`http://localhost:3000/${req.file.path}` });
-                            res.json({message:'done' , message2:req.file})
+                            res.json({message:'done' , message2:req.file}) }
+                            else {
+                                res.json({message:"upload closed"})
+                            }
                         }
                     }
                 else
