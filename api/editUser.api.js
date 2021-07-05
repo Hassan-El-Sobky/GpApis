@@ -32,7 +32,7 @@ check('rePassword').custom((value, { req }) => {
     return true;
 })
 ,async(req,res)=>{
-    const {oldUserName,username, oldPassword,password,rePassword,token}=req.body;
+    const {oldUserName,username, oldPassword,password,rePassword,}=req.body;
     console.log(password);
     const errors = validationResult(req);
     
@@ -40,11 +40,7 @@ check('rePassword').custom((value, { req }) => {
     const match = await bcrypt.compare(oldPassword, user.password);
     console.log(req.file);
     try {
-        jwt.verify(token ,"student" ,async (err, decodded)=>{
-            if(err){
-                res.json({message:"there is error"});
-            }
-            else{
+
                if(match){
                    if(errors.isEmpty()==true){
                        let user1 = await userModel.findOne({username})
@@ -76,7 +72,6 @@ check('rePassword').custom((value, { req }) => {
                                 });   
                             }
                             else {
-
                                 bcrypt.hash(oldPassword, 4, async (err, hash)=> {
                                     if (username&&req.file!==undefined) {
                                         await userModel.updateMany({username:oldUserName},{$set:{oldPassword:hash, username:username , imageUrl:`http://localhost:3000/${req.file.path}`}});
@@ -106,8 +101,7 @@ check('rePassword').custom((value, { req }) => {
                }else{
                    res.json('Wrong Password!');
                }
-            }
-        })
+            
         
     } catch (error) {
         
