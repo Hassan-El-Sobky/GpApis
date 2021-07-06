@@ -50,7 +50,7 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                             else if (name&&name!="null"){
                                 await userModel.updateMany({username},{$set:{password:hash, name , imageUrl:user.imageUrl}});
                                 let user1 = await userModel.findOne({username})
-                                res.json({message:'updated' , user1}); 
+                                res.json({message:'updated named' , user1}); 
                             }
                             else if (req.file!==undefined&&req.file!="null")
                             {
@@ -60,7 +60,7 @@ server.put('/editUser' ,userImage.single("userImage") , check('rePassword').cust
                             else{
                                 await userModel.updateMany({username},{$set:{password:hash, name:user.name ,imageUrl:user.imageUrl}});
                                 let user1 = await userModel.findOne({username})
-                                res.json({message:'updated' , user1});         }
+                                res.json({message:'updated wla 7aga' , user1});         }
 
 
                     });  
