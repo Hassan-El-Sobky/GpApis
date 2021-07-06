@@ -123,7 +123,7 @@ registerCourse.get('/grades/:username',async(req,res)=>{
                 for (let j = 0; j < grades[i].grades.length; j++) {
                     let assesmentTemp = await assesmentModel.findOne({_id:grades[i].grades[j].assesmentId});
                     console.log(assesmentTemp);
-                    if(assesmentTemp){
+                    if(assesmentTemp!==undefined && assesmentTemp!==null){
                         let courseTemp = await courseModel.findOne({_id:assesmentTemp.courseId});
                         gradesContainer.push({assessmentTitle : assesmentTemp.title , courseName : courseTemp.courseName , grade:grades[i].grades[j].grade});
                     }
@@ -186,6 +186,48 @@ registerCourse.get('/gradesCourse/:courseId',async(req,res)=>{
         
     }*/
     res.json({container})
+})
+registerCourse.get('/searchGradeUser/:username',async(req,res)=>{
+    let searchKey = req.query.title;
+    let username = req.params.username;
+    let assesment = await assesmentModel.find({title:{$regex:searchKey , $options:'i'}})
+    let student = await userModel.findOne({username});
+    if(student){
+        let grades = await studentCourseModel.find({userID:student._id});
+        if(grades){
+            let gradesContainer =[]
+            for (let i = 0; i < grades.length; i++) {
+                for (let j = 0; j < grades[i].grades.length; j++) {
+                    let assesmentTemp = await assesmentModel.findOne({_id:grades[i].grades[j].assesmentId});
+                    console.log(assesmentTemp);
+                    if(assesmentTemp!==undefined && assesmentTemp!==null){
+                        let courseTemp = await courseModel.findOne({_id:assesmentTemp.courseId});
+                        gradesContainer.push({username : username ,assessmentTitle : assesmentTemp.title , courseName : courseTemp.courseName , grade:grades[i].grades[j].grade});
+                    }
+                   
+                }
+            }
+            let searchResult=[];
+            for (let i = 0; i < assesment.length; i++) {
+                for (let j = 0; j < gradesContainer.length; j++) {
+                    if(assesment[i].title===gradesContainer[j].assessmentTitle && username === gradesContainer[j].username)    
+                    {
+                        searchResult.push(gradesContainer[j]);
+                    }                
+                }                
+            }
+            res.json({searchResult})
+        }
+        else{
+            res.json({message:"no grades"})
+        }
+    }
+    else{
+        res.json({message:"invalid username"})
+    }
+})
+registerCourse.get('/searchGradeInstructor/:courseId',async(req,res)=>{
+    let searchKey = req.query.username;
 })
 
 
