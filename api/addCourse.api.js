@@ -99,7 +99,7 @@ addCourse.get('/course/:courseId',async (req,res)=>{
 addCourse.get('/searchCourse',async (req,res)=>{
     const searchKey = req.query.coursename;
     console.log(searchKey);
-    const searchResult = await courseModel.find({$or:[{courseName:{$regex:searchKey}},{courseCode:{$regex:searchKey}},{courseDepartment:{$regex:searchKey}}]})
+    const searchResult = await courseModel.find({$or:[{courseName:{$regex:searchKey , $options : 'i'}},{courseCode:{$regex:searchKey , $options : 'i'}},{courseDepartment:{$regex:searchKey , $options : 'i'}}]})
     res.json({searchResult});
 })
 module.exports=addCourse

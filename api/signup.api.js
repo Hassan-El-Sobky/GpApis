@@ -133,7 +133,7 @@ check('rePassword').custom((value, { req }) => {
 signup.get('/searchuser' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.find({$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},{email:{$regex:searchKey.toLowerCase()}}]})
+    const searchResult = await userModel.find({$or:[{username:{$regex:searchKey, $options : 'i'}},{name:{$regex:searchKey, $options : 'i'}},{email:{$regex:searchKey.toLowerCase()}}]})
     if(searchResult){
     res.json({searchResult});
     }
@@ -145,7 +145,7 @@ signup.get('/searchuser' , async (req,res)=>{
 signup.get('/searchInstructor' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey , $options : 'i'}},{name:{$regex:searchKey, $options : 'i'}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"instructor"}]})
     if(searchResult){
     res.json({searchResult});
@@ -157,7 +157,7 @@ signup.get('/searchInstructor' , async (req,res)=>{
 signup.get('/searchStudent' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey, $options : 'i'}},{name:{$regex:searchKey, $options : 'i'}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"student"}]})
     if(searchResult){
     res.json({searchResult});
@@ -169,7 +169,7 @@ signup.get('/searchStudent' , async (req,res)=>{
 signup.get('/searchAdmin' , async (req,res)=>{
     const searchKey = req.query.username;
     console.log(searchKey);
-    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey}},{name:{$regex:searchKey}},
+    const searchResult = await userModel.find({$and:[{$or:[{username:{$regex:searchKey, $options : 'i'}},{name:{$regex:searchKey, $options : 'i'}},
                                                  {email:{$regex:searchKey.toLowerCase()}}]}, {role:"admin"}]})
     if(searchResult){
     res.json({searchResult});
