@@ -190,10 +190,12 @@ registerCourse.get('/gradesCourse/:courseId',async(req,res)=>{
     }*/
     res.json({container})
 })
-registerCourse.get('/searchGradeUser/:username',async(req,res)=>{
+registerCourse.get('/searchGradeUser/:username/:courseId',async(req,res)=>{
     let searchKey = req.query.title;
     let username = req.params.username;
+    let courseId = req.params.courseId;
     let assesment = await assesmentModel.find({title:{$regex:searchKey , $options:'i'}})
+    let course = await courseModel.findOne({_id:courseId});
     let student = await userModel.findOne({username});
     if(student){
         let grades = await studentCourseModel.find({userID:student._id});
@@ -213,7 +215,7 @@ registerCourse.get('/searchGradeUser/:username',async(req,res)=>{
             let searchResult=[];
             for (let i = 0; i < assesment.length; i++) {
                 for (let j = 0; j < gradesContainer.length; j++) {
-                    if(assesment[i].title===gradesContainer[j].assessmentTitle && username === gradesContainer[j].username)    
+                    if(assesment[i].title===gradesContainer[j].assessmentTitle && username === gradesContainer[j].username && course.courseName === gradesContainer[j].courseName)    
                     {
                         searchResult.push(gradesContainer[j]);
                     }                
