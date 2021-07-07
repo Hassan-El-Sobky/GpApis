@@ -58,7 +58,7 @@ check('rePassword').custom((value, { req }) => {
                         let registrationDate = moment(d).format("YYYY-MM-DDTHH:MM")
                         await userModel.insertMany({name , username , email:email.toLowerCase() , password : hash , gender , role , imageUrl:`http://localhost:3000/${req.file.path}`,mobilePhone,registrationDate });
                         user = await userModel.findOne({username})
-                        res.json({message:'user'+username+'Created' , user});
+                        res.json({message:'done' , user});
                     }
 
                 });

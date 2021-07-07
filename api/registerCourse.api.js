@@ -167,6 +167,9 @@ registerCourse.get('/gradesCourse/:courseId',async(req,res)=>{
     let container = []
     console.log("stCourse : "+studentCourse.length);
     console.log(studentCourse[0].grades.length);
+    if(studentCourse){
+        
+    }
     for (let i = 0; i < studentCourse.length; i++) {
         for (let j = 0; j < studentCourse[i].grades.length; j++) {
             let assesmentTemp = await assesmentModel.findOne({_id:studentCourse[i].grades[j].assesmentId , courseId});
@@ -228,6 +231,39 @@ registerCourse.get('/searchGradeUser/:username',async(req,res)=>{
 })
 registerCourse.get('/searchGradeInstructor/:courseId',async(req,res)=>{
     let searchKey = req.query.username;
+    let courseId = req.params.courseId;
+    let course = await courseModel.findOne({_id:courseId});
+    let assesment = await assesmentModel.find({courseId});
+    let studentCourse = await studentCourseModel.find({courseId});
+    let student = await userModel.find({username:{$regex:searchKey , $options:'i'}});
+    let container = []
+    console.log("stCourse : "+studentCourse.length);
+    console.log(studentCourse[0].grades.length);
+    if(studentCourse){
+     
+    for (let i = 0; i < studentCourse.length; i++) {
+        for (let j = 0; j < studentCourse[i].grades.length; j++) {
+            let assesmentTemp = await assesmentModel.findOne({_id:studentCourse[i].grades[j].assesmentId , courseId});
+            let user = await userModel.findOne({_id:studentCourse[i].userID})
+            console.log("temp :"+assesmentTemp);
+            if(assesmentTemp){
+                container.push({studentUserName: user.username, assesmentTitle: assesmentTemp.title , grade : studentCourse[i].grades[j].grade})
+            }
+        }
+    }
+        let searchResult = [];
+        for (let i = 0; i < student.length; i++) {
+            for (let j = 0; j < container.length; j++) {
+                if (student[i].username===container[j].studentUserName) {
+                    searchResult.push(container[j])
+                }
+            }            
+        }
+        res.json({searchResult});
+}
+    else{
+        res.json({message:"student not in course"})
+    }
 })
 
 
